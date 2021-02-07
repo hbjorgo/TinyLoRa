@@ -1,5 +1,5 @@
-#ifndef Encryption_H
-#define Encryption_H
+#ifndef AES_H
+#define AES_H
 
 #include <Arduino.h>
 #if defined(ARDUINO_ARCH_AVR)
@@ -7,10 +7,10 @@
 #elif defined(ARDUINO_ARCH_ESP32)
 #include <pgmspace.h>
 #endif
+#include <string.h>
 
 class AES {
   public:
-    AES();
     void Encrypt(unsigned char *Data, unsigned char *Key);
 
   private:

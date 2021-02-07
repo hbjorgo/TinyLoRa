@@ -40,9 +40,6 @@ const unsigned char PROGMEM AES::S_Table[16][16] = {
     {0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F,
      0xB0, 0x54, 0xBB, 0x16}};
 
-AES::AES() {
-}
-
 /**************************************************************************/
 /*!
     @brief    Function used to perform AES encryption.

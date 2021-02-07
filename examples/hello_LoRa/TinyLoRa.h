@@ -43,6 +43,10 @@
 #include <pgmspace.h>
 #endif
 
+#include "AES.h"
+#include "AES_CMAC.h"
+#include <SPI.h>
+
 // uncomment for debug output
 // #define DEBUG
 
@@ -120,6 +124,8 @@ public:
   void join(uint8_t *joinEui, uint8_t *devEui, uint16_t devNounce);
 
 private:
+  AES aes;
+  AES_CMAC aesCmac;
   uint8_t randomNum;
   int8_t _cs, _irq, _rst;
   bool _isMultiChan;
@@ -132,6 +138,9 @@ private:
   void Encrypt_Payload(unsigned char *Data, unsigned char Data_Length,
                        unsigned int Frame_Counter, unsigned char Direction);
   void Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC,
+                     unsigned char Data_Length, unsigned int Frame_Counter,
+                     unsigned char Direction);
+  void AES_CMAC_Encrypt(unsigned char *Data, unsigned char *Final_MIC,
                      unsigned char Data_Length, unsigned int Frame_Counter,
                      unsigned char Direction);
   void Generate_Keys(unsigned char *K1, unsigned char *K2);
