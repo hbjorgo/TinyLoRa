@@ -51,6 +51,7 @@
 
 AES aes = AES();
 
+extern uint8_t NwkKey[16]; ///< Network Key
 extern uint8_t NwkSkey[16]; ///< Network Session Key
 extern uint8_t AppSkey[16]; ///< Application Session Key
 extern uint8_t DevAddr[4];  ///< Device Address
@@ -966,5 +967,76 @@ void TinyLoRa::XOR(unsigned char *New_Data, unsigned char *Old_Data) {
 
   for (i = 0; i < 16; i++) {
     New_Data[i] = New_Data[i] ^ Old_Data[i];
+  }
+}
+
+void TinyLoRa::join(uint8_t *joinEui, uint8_t *devEui, uint16_t devNounce) {  
+  // Define variables
+  unsigned char i;
+
+  // Direction of frame is up
+  unsigned char Direction = 0x00;
+
+  unsigned char RFM_Data[64];
+  unsigned char RFM_Package_Length;
+
+  unsigned char MIC[4];
+
+  // Build the Radio Package
+  RFM_Data[0] = 0x00;
+  RFM_Data[1] = joinEui[0];
+  RFM_Data[2] = joinEui[1];
+  RFM_Data[3] = joinEui[2];
+  RFM_Data[4] = joinEui[3];
+  RFM_Data[5] = joinEui[4];
+  RFM_Data[6] = joinEui[5];
+  RFM_Data[7] = joinEui[6];
+  RFM_Data[8] = joinEui[7];
+  RFM_Data[9] = devEui[0];
+  RFM_Data[10] = devEui[1];
+  RFM_Data[11] = devEui[2];
+  RFM_Data[12] = devEui[3];
+  RFM_Data[13] = devEui[4];
+  RFM_Data[14] = devEui[5];
+  RFM_Data[15] = devEui[6];
+  RFM_Data[16] = devEui[7];
+  RFM_Data[17] = devNounce & 0xFF;
+  RFM_Data[18] = (devNounce >> 8) & 0xFF;
+
+  // Set Current package length
+  RFM_Package_Length = 19;
+
+#ifdef DEBUG
+  Serial.print("Package length: ");
+  Serial.println(RFM_Package_Length);
+#endif
+
+  // Calculate MIC
+  unsigned char dataCopy[19];
+  for (i = 0; i < 19; i++) {
+    dataCopy[i] = RFM_Data[i];
+  }
+  aes.Encrypt(dataCopy ,NwkKey);
+  //MIC[0] = 
+
+  // Load MIC in package
+  for (i = 0; i < 4; i++) {
+    RFM_Data[i + RFM_Package_Length] = MIC[i];
+  }
+
+  // Add MIC length to RFM package length
+  RFM_Package_Length = RFM_Package_Length + 4;
+
+  // Send Package
+  RFM_Send_Package(RFM_Data, RFM_Package_Length);
+#ifdef DEBUG
+  Serial.println("sent package!");
+#endif
+
+  uint8_t joinAccept[28]; // TODO: Allow for optional parameters (16 bytes)
+  char buffer[33];
+  for (i = 0; i < 28; i++) {
+    joinAccept[i] = RFM_Read(0x00);
+    Serial.print(itoa(joinAccept[i], buffer, 16));
   }
 }
