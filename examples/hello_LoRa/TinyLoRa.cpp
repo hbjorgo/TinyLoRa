@@ -697,7 +697,7 @@ void TinyLoRa::Encrypt_Payload(unsigned char *Data, unsigned char Data_Length, /
     Block_A[15] = i;
 
     // Calculate S
-    aes.AES_Encrypt(Block_A, AppSkey); // original
+    aes.Encrypt(Block_A, AppSkey); // original
 
     // Check for last block
     if (i != Number_of_Blocks) {
@@ -791,7 +791,7 @@ void TinyLoRa::Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC,
   // Preform Calculation on Block B0
 
   // Preform AES encryption
-  aes.AES_Encrypt(Block_B, NwkSkey);
+  aes.Encrypt(Block_B, NwkSkey);
 
   // Copy Block_B to Old_Data
   for (i = 0; i < 16; i++) {
@@ -810,7 +810,7 @@ void TinyLoRa::Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC,
     XOR(New_Data, Old_Data);
 
     // Preform AES encryption
-    aes.AES_Encrypt(New_Data, NwkSkey);
+    aes.Encrypt(New_Data, NwkSkey);
 
     // Copy New_Data to Old_Data
     for (i = 0; i < 16; i++) {
@@ -838,7 +838,7 @@ void TinyLoRa::Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC,
 
     // Preform last AES routine
     // read NwkSkey from PROGMEM
-    aes.AES_Encrypt(New_Data, NwkSkey);
+    aes.Encrypt(New_Data, NwkSkey);
   } else {
     // Copy the remaining data and fill the rest
     for (i = 0; i < 16; i++) {
@@ -861,7 +861,7 @@ void TinyLoRa::Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC,
     XOR(New_Data, Old_Data);
 
     // Preform last AES routine
-    aes.AES_Encrypt(New_Data, NwkSkey);
+    aes.Encrypt(New_Data, NwkSkey);
   }
 
   Final_MIC[0] = New_Data[0];
@@ -891,7 +891,7 @@ void TinyLoRa::Generate_Keys(unsigned char *K1, unsigned char *K2) {
   unsigned char MSB_Key;
 
   // Encrypt the zeros in K1 with the NwkSkey
-  aes.AES_Encrypt(K1, NwkSkey);
+  aes.Encrypt(K1, NwkSkey);
 
   // Create K1
   // Check if MSB is 1

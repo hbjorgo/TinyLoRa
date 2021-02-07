@@ -11,15 +11,15 @@
 class AES {
   public:
     AES();
-    void AES_Encrypt(unsigned char *Data, unsigned char *Key);
+    void Encrypt(unsigned char *Data, unsigned char *Key);
 
   private:
     static const unsigned char S_Table[16][16];
-    void AES_Add_Round_Key(unsigned char *Round_Key, unsigned char (*State)[4]);
-    void AES_Calculate_Round_Key(unsigned char Round, unsigned char *Round_Key);
-    unsigned char AES_Sub_Byte(unsigned char Byte);
-    void AES_Shift_Rows(unsigned char (*State)[4]);
-    void AES_Mix_Collums(unsigned char (*State)[4]);
+    void Add_Round_Key(unsigned char *Round_Key, unsigned char (*State)[4]);
+    void Calculate_Round_Key(unsigned char Round, unsigned char *Round_Key);
+    unsigned char Sub_Byte(unsigned char Byte);
+    void Shift_Rows(unsigned char (*State)[4]);
+    void Mix_Collums(unsigned char (*State)[4]);
 };
 
 #endif

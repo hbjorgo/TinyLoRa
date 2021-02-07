@@ -52,7 +52,7 @@ AES::AES() {
               Pointer to AES encryption key.
 */
 /**************************************************************************/
-void AES::AES_Encrypt(unsigned char *Data, unsigned char *Key) {
+void AES::Encrypt(unsigned char *Data, unsigned char *Key) {
   unsigned char Row, Column, Round = 0;
   unsigned char Round_Key[16];
   unsigned char State[4][4];
@@ -68,45 +68,45 @@ void AES::AES_Encrypt(unsigned char *Data, unsigned char *Key) {
   memcpy(&Round_Key[0], &Key[0], 16);
 
   //  Add round key
-  AES_Add_Round_Key(Round_Key, State);
+  Add_Round_Key(Round_Key, State);
 
   //  Preform 9 full rounds with mixed collums
   for (Round = 1; Round < 10; Round++) {
     //  Perform Byte substitution with S table
     for (Column = 0; Column < 4; Column++) {
       for (Row = 0; Row < 4; Row++) {
-        State[Row][Column] = AES_Sub_Byte(State[Row][Column]);
+        State[Row][Column] = Sub_Byte(State[Row][Column]);
       }
     }
 
     //  Perform Row Shift
-    AES_Shift_Rows(State);
+    Shift_Rows(State);
 
     //  Mix Collums
-    AES_Mix_Collums(State);
+    Mix_Collums(State);
 
     //  Calculate new round key
-    AES_Calculate_Round_Key(Round, Round_Key);
+    Calculate_Round_Key(Round, Round_Key);
 
     //  Add the round key to the Round_key
-    AES_Add_Round_Key(Round_Key, State);
+    Add_Round_Key(Round_Key, State);
   }
 
   //  Perform Byte substitution with S table whitout mix collums
   for (Column = 0; Column < 4; Column++) {
     for (Row = 0; Row < 4; Row++) {
-      State[Row][Column] = AES_Sub_Byte(State[Row][Column]);
+      State[Row][Column] = Sub_Byte(State[Row][Column]);
     }
   }
 
   //  Shift rows
-  AES_Shift_Rows(State);
+  Shift_Rows(State);
 
   //  Calculate new round key
-  AES_Calculate_Round_Key(Round, Round_Key);
+  Calculate_Round_Key(Round, Round_Key);
 
   //  Add round key
-  AES_Add_Round_Key(Round_Key, State);
+  Add_Round_Key(Round_Key, State);
 
   //  Copy the State into the data array
   for (Column = 0; Column < 4; Column++) {
@@ -125,7 +125,7 @@ void AES::AES_Encrypt(unsigned char *Data, unsigned char *Key) {
               Pointer to bytes of the states-to-be-xor'd.
 */
 /**************************************************************************/
-void AES::AES_Add_Round_Key(unsigned char *Round_Key,
+void AES::Add_Round_Key(unsigned char *Round_Key,
                                  unsigned char (*State)[4]) {
   unsigned char Row, Collum;
 
@@ -145,7 +145,7 @@ void AES::AES_Add_Round_Key(unsigned char *Round_Key,
               Pointer to round key.
 */
 /**************************************************************************/
-void AES::AES_Calculate_Round_Key(unsigned char Round,
+void AES::Calculate_Round_Key(unsigned char Round,
                                        unsigned char *Round_Key) {
   unsigned char i, j, b, Rcon;
   unsigned char Temp[4];
@@ -165,10 +165,10 @@ void AES::AES_Calculate_Round_Key(unsigned char Round,
   //  Calculate first Temp
   //  Copy laste byte from previous key and subsitute the byte, but shift the
   //  array contents around by 1.
-  Temp[0] = AES_Sub_Byte(Round_Key[12 + 1]);
-  Temp[1] = AES_Sub_Byte(Round_Key[12 + 2]);
-  Temp[2] = AES_Sub_Byte(Round_Key[12 + 3]);
-  Temp[3] = AES_Sub_Byte(Round_Key[12 + 0]);
+  Temp[0] = Sub_Byte(Round_Key[12 + 1]);
+  Temp[1] = Sub_Byte(Round_Key[12 + 2]);
+  Temp[2] = Sub_Byte(Round_Key[12 + 3]);
+  Temp[3] = Sub_Byte(Round_Key[12 + 0]);
 
   //  XOR with Rcon
   Temp[0] ^= Rcon;
@@ -189,7 +189,7 @@ void AES::AES_Calculate_Round_Key(unsigned char Round,
               Individual byte, from state array.
 */
 /**************************************************************************/
-unsigned char AES::AES_Sub_Byte(unsigned char Byte) {
+unsigned char AES::Sub_Byte(unsigned char Byte) {
   //  unsigned char S_Row,S_Collum;
   //  unsigned char S_Byte;
   //
@@ -209,7 +209,7 @@ unsigned char AES::AES_Sub_Byte(unsigned char Byte) {
               Pointer to state array.
 */
 /**************************************************************************/
-void AES::AES_Shift_Rows(unsigned char (*State)[4]) {
+void AES::Shift_Rows(unsigned char (*State)[4]) {
   unsigned char Buffer;
 
   // Store firt byte in buffer
@@ -241,7 +241,7 @@ void AES::AES_Shift_Rows(unsigned char (*State)[4]) {
               Pointer to state array.
 */
 /**************************************************************************/
-void AES::AES_Mix_Collums(unsigned char (*State)[4]) {
+void AES::Mix_Collums(unsigned char (*State)[4]) {
   unsigned char Row, Collum;
   unsigned char a[4], b[4];
 
@@ -260,4 +260,4 @@ void AES::AES_Mix_Collums(unsigned char (*State)[4]) {
     State[2][Collum] = a[0] ^ a[1] ^ b[2] ^ a[3] ^ b[3];
     State[3][Collum] = a[0] ^ b[0] ^ a[1] ^ a[2] ^ b[3];
   }
-} //  AES_Mix_Collums
+} //  Mix_Collums
