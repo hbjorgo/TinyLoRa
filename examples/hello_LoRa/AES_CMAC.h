@@ -6,15 +6,6 @@
 
 class AES_CMAC {
   public:
-  void Calculate_MIC(unsigned char *Data,
-                     unsigned char *Final_MIC,
-                     unsigned char Data_Length,
-                     unsigned int Frame_Counter,
-                     unsigned char Direction,
-                     uint8_t *NwkSKey,
-                     uint8_t *DevAddr,
-                     uint8_t &randomNum,
-                     uint8_t &txrandomNum);
     void Calculate(unsigned char *Data,
                    unsigned char *Final_MIC,
                    unsigned char Data_Length,
