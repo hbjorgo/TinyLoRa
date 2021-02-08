@@ -59,6 +59,9 @@ void AES_CMAC::Calculate_MIC(unsigned char *Data,
     Number_of_Blocks++;
   }
 
+  Serial.print("Data_Length: "); Serial.println(Data_Length);
+  Serial.print("#Blocks: "); Serial.println(Number_of_Blocks);
+
   Generate_Keys(Key_K1, Key_K2, NwkSKey);
 
   // Preform Calculation on Block B0
@@ -92,6 +95,10 @@ void AES_CMAC::Calculate_MIC(unsigned char *Data,
 
     // Raise Block counter
     Block_Counter++;
+    
+    for (uint8_t x = 0; x < 16; x++) {
+      Serial.print(Old_Data[i]);
+    }
   }
 
   // Perform calculation on last block
@@ -170,7 +177,7 @@ void AES_CMAC::Calculate(unsigned char *Data,
 
   unsigned char Number_of_Blocks = 0x00;
   unsigned char Incomplete_Block_Size = 0x00;
-  unsigned char Block_Counter = 0x00;
+  unsigned char Block_Counter = 0x01;
 
   // Calculate number of Blocks and blocksize of last block
   Number_of_Blocks = Data_Length / 16;
@@ -179,6 +186,9 @@ void AES_CMAC::Calculate(unsigned char *Data,
   if (Incomplete_Block_Size != 0) {
     Number_of_Blocks++;
   }
+
+  Serial.print("Data_Length: "); Serial.println(Data_Length);
+  Serial.print("#Blocks: "); Serial.println(Number_of_Blocks);
 
   Generate_Keys(Key_K1, Key_K2, NwkSKey);
 
@@ -203,6 +213,10 @@ void AES_CMAC::Calculate(unsigned char *Data,
 
     // Raise Block counter
     Block_Counter++;
+
+    for (uint8_t x = 0; x < 16; x++) {
+      Serial.print(Old_Data[i]);
+    }
   }
 
   // Perform calculation on last block

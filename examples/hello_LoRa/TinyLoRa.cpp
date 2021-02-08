@@ -734,13 +734,36 @@ void TinyLoRa::Calculate_MIC(unsigned char *Data,
                              unsigned char Data_Length,
                              unsigned int Frame_Counter,
                              unsigned char Direction) {
-  aesCmac.Calculate_MIC(Data,
+  unsigned int i;
+  unsigned char *mergedData = new unsigned char[Data_Length + 16];
+  mergedData[0] = 0x49;
+  mergedData[1] = 0x00;
+  mergedData[2] = 0x00;
+  mergedData[3] = 0x00;
+  mergedData[4] = 0x00;
+
+  mergedData[5] = Direction;
+
+  mergedData[6] = DevAddr[3];
+  mergedData[7] = DevAddr[2];
+  mergedData[8] = DevAddr[1];
+  mergedData[9] = DevAddr[0];
+
+  mergedData[10] = (Frame_Counter & 0x00FF);
+  mergedData[11] = ((Frame_Counter >> 8) & 0x00FF);
+
+  mergedData[12] = 0x00; // Frame counter upper bytes
+  mergedData[13] = 0x00;
+
+  mergedData[14] = 0x00;
+  mergedData[15] = Data_Length;
+
+  memcpy(&mergedData + 16, Data, Data_Length);
+
+  aesCmac.Calculate(mergedData,
                     Final_MIC,
-                    Data_Length,
-                    Frame_Counter,
-                    Direction,
+                    Data_Length + 16,
                     NwkSkey,
-                    DevAddr,
                     randomNum,
                     txrandomNum);
 }
