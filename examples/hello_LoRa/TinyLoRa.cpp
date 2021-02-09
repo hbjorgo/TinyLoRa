@@ -811,11 +811,14 @@ void TinyLoRa::join(uint8_t *joinEui, uint8_t *devEui, uint16_t devNounce) {
 
   // Calculate MIC
   unsigned char dataCopy[19];
-  for (i = 0; i < 19; i++) {
-    dataCopy[i] = RFM_Data[i];
-  }
-  aes.Encrypt(dataCopy ,NwkKey);
-  //MIC[0] = 
+  memcpy(dataCopy, RFM_Data, RFM_Package_Length);
+  aesCmac.Calculate(dataCopy,
+                   MIC,
+                   RFM_Package_Length,
+                   NwkSkey,
+                   randomNum,
+                   txrandomNum);
+  
 
   // Load MIC in package
   for (i = 0; i < 4; i++) {
